@@ -123,16 +123,16 @@
   <div class="col-md-12 m-b-xl">
     <div class="text-center">
       <button type="button" name="button" class="btn btn-primary" id="simpan"><i class="fa fa-save"></i><span class="hidden-xs"> Simpan</span></button>
-      <button type="button" name="button" class="btn btn-info" id="simpan_keluar"><i class="fa fa-trash"></i><span class="hidden-xs"> Keluar</span></button>
-      <button type="button" name="button" class="btn btn-danger" id="hapus"><i class="fa fa-trash"></i><span class="hidden-xs"> Hapus</span></button>
-      <button type="button" name="button" class="btn btn-warning" id="batal"><i class="fa fa-close"></i><span class="hidden-xs"> Batal</span></button>
-      <button type="button" name="button" class="btn btn-warning" id="btn_pulangkan_pasien"><i class="fa fa-sign-out"></i><span class="hidden-xs"> Pulangkan Pasien</span></button>
+      <button type="button" name="button" class="btn btn-danger" id="btn_pulangkan_pasien" style="margin-left: 10px;" title="Update tanggal pulang SEP ke BPJS"><i class="fa fa-sign-out"></i><span class="hidden-xs"> Pulangkan Pasien BPJS</span></button>
+      <button type="button" name="button" class="btn btn-info" id="simpan_keluar" style="margin-left: 10px;"><i class="fa fa-trash"></i><span class="hidden-xs"> Keluar</span></button>
+      <button type="button" name="button" class="btn btn-danger" id="hapus" style="margin-left: 10px;"><i class="fa fa-trash"></i><span class="hidden-xs"> Hapus</span></button>
+      <button type="button" name="button" class="btn btn-warning" id="batal" style="margin-left: 10px;"><i class="fa fa-close"></i><span class="hidden-xs"> Batal</span></button>
     </div>
   </div>
 </div>
 <!-- Modal Pulangkan Pasien -->
 <div class="modal fade" id="modalPulangkanPasien" tabindex="-1" role="dialog" aria-labelledby="modalPulangkanPasienLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -159,20 +159,20 @@
             <input type="text" class="form-control" id="inputNoSuratMeninggal" name="no_surat_meninggal" placeholder="No. Surat Meninggal">
           </div>
           <div class="form-group" id="divTglMeninggal" style="display:none;">
-            <label for="inputTglMeninggal">Tanggal Meninggal (yyyy-MM-dd)</label>
+            <label for="inputTglMeninggal">Tanggal Meninggal</label>
             <input type="text" class="form-control tanggal" id="inputTglMeninggal" name="tgl_meninggal" placeholder="2024-07-01">
           </div>
           <div class="form-group">
-            <label for="inputTglPulang">Tanggal Pulang (yyyy-MM-dd)</label>
+            <label for="inputTglPulang">Tanggal Pulang</label>
             <input type="text" class="form-control tanggal" id="inputTglPulang" name="tgl_pulang" placeholder="2024-07-01" required>
           </div>
           <div class="form-group">
             <label for="inputNoLPManual">No. LP Manual (untuk KLL)</label>
-            <input type="text" class="form-control" id="inputNoLPManual" name="no_lp_manual" placeholder="No. LP Manual (opsional)">
+            <input type="text" class="form-control" id="inputNoLPManual" name="no_lp_manual" placeholder="Diisi jika SEPnya adalah KLL">
           </div>
           <div class="form-group">
             <label for="inputUser">User</label>
-            <input type="text" class="form-control" id="inputUser" name="user" placeholder="Nama User" required>
+            <input type="text" class="form-control" id="inputUser" name="user" placeholder="Nama User" required readonly>
           </div>
         </form>
         <div id="notifPulangkanPasien"></div>
@@ -180,6 +180,50 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
         <button type="button" class="btn btn-primary" id="submitPulangkanPasien">Update Tanggal Pulang</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Biometrik Fingerprint SEP -->
+<div class="modal fade" id="modalBiometrikSEP" tabindex="-1" role="dialog" aria-labelledby="modalBiometrikSEPLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalBiometrikSEPLabel">Pengajuan & Approval Fingerprint SEP</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formBiometrikSEP">
+          <div class="form-group">
+            <label for="bioNoKartu">No. Kartu BPJS</label>
+            <input type="text" class="form-control" id="bioNoKartu" name="noKartu" readonly>
+          </div>
+          <div class="form-group">
+            <label for="bioTglSep">Tanggal SEP</label>
+            <input type="text" class="form-control" id="bioTglSep" name="tglSep" readonly>
+          </div>
+          <div class="form-group">
+            <label for="bioJnsPelayanan">Jenis Pelayanan</label>
+            <select class="form-control" id="bioJnsPelayanan" name="jnsPelayanan" readonly>
+              <option value="1">Rawat Inap</option>
+              <option value="2">Rawat Jalan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bioKeterangan">Keterangan</label>
+            <input type="text" class="form-control" id="bioKeterangan" name="keterangan" placeholder="Keterangan pengajuan fingerprint" required>
+          </div>
+          <div class="form-group">
+            <label for="bioUser">User</label>
+            <input type="text" class="form-control" id="bioUser" name="user" readonly>
+          </div>
+        </form>
+        <div id="notifBiometrikSEP"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-primary" id="submitPengajuanBiometrik">Pengajuan Fingerprint</button>
+        <button type="button" class="btn btn-success" id="submitApprovalBiometrik" style="display:none;">Approval Fingerprint</button>
       </div>
     </div>
   </div>
@@ -247,4 +291,47 @@
          locale: 'id'
        });
    });
+</script>
+<script type="text/javascript">
+  // Handler Pulangkan Pasien (Update Tanggal Pulang SEP)
+  $("#form").on("click", "#btn_pulangkan_pasien", function() {
+    // Prefill jika memungkinkan
+    $("#inputNoSep").val($('input[name=no_sep]').val() || '');
+    $("#inputTglPulang").val('');
+    
+    // Auto-fill user dengan nama user yang sedang login
+    var currentUser = '{$mlite.username}'; // Ambil dari template
+    if (!currentUser || currentUser == '') {
+      currentUser = 'Admin'; // Default fallback
+    }
+    $("#inputUser").val(currentUser);
+    
+    $("#inputStatusPulang").val('');
+    $("#inputNoSuratMeninggal").val('');
+    $("#inputTglMeninggal").val('');
+    $("#inputNoLPManual").val('');
+    $("#divMeninggal").hide();
+    $("#divTglMeninggal").hide();
+    $("#notifPulangkanPasien").html('');
+    $("#modalPulangkanPasien").modal("show");
+  });
+</script>
+<script type="text/javascript">
+  // Show/hide field meninggal berdasarkan status pulang
+  $("#modalPulangkanPasien").on("change", "#inputStatusPulang", function() {
+    var status = $(this).val();
+    if (status == "4") { // Meninggal
+      $("#divMeninggal").show();
+      $("#divTglMeninggal").show();
+      $("#inputNoSuratMeninggal").prop("required", true);
+      $("#inputTglMeninggal").prop("required", true);
+    } else {
+      $("#divMeninggal").hide();
+      $("#divTglMeninggal").hide();
+      $("#inputNoSuratMeninggal").prop("required", false);
+      $("#inputTglMeninggal").prop("required", false);
+      $("#inputNoSuratMeninggal").val("");
+      $("#inputTglMeninggal").val("");
+    }
+  });
 </script>

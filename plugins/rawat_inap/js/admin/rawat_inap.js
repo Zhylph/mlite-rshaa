@@ -1202,7 +1202,14 @@ $("#form").on("click", "#btn_pulangkan_pasien", function() {
   // Prefill jika memungkinkan
   $("#inputNoSep").val($('input[name=no_sep]').val() || '');
   $("#inputTglPulang").val('');
-  $("#inputUser").val($('input[name=nm_pasien]').val() || '');
+  
+  // Ambil nama user dari backend
+  var baseURL = mlite.url + '/' + mlite.admin;
+  $.get(baseURL + '/rawat_inap/currentUser?t=' + mlite.token, function(data) {
+    var userData = JSON.parse(data);
+    $("#inputUser").val(userData.username || 'Admin');
+  });
+  
   $("#inputStatusPulang").val('');
   $("#inputNoSuratMeninggal").val('');
   $("#inputTglMeninggal").val('');
@@ -1316,6 +1323,91 @@ $("#modalListUpdtglplg").on("click", "#submitListUpdtglplg", function() {
     error: function(xhr) {
       $("#notifListUpdtglplg").html('<span class="text-danger">Terjadi kesalahan koneksi.</span>');
       $("#tableListUpdtglplg tbody").html('');
+    }
+  });
+});
+
+// Handler Biometrik Fingerprint SEP
+$("#form").off("click", "#biometrik"); // pastikan handler lama tidak aktif
+$("#form").on("click", "#biometrikFingerprint", function(e) {
+  e.preventDefault();
+  // Prefill data dari form utama
+  $("#bioNoKartu").val($('input[name=no_peserta]').val() || '');
+  $("#bioTglSep").val($('input[name=tgl_sep]').val() || '');
+  $("#bioJnsPelayanan").val('1'); // Default Rawat Inap
+  $("#bioKeterangan").val('');
+  // Ambil user dari backend
+  var baseURL = mlite.url + '/' + mlite.admin;
+  $.get(baseURL + '/rawat_inap/currentUser?t=' + mlite.token, function(data) {
+    var userData = JSON.parse(data);
+    $("#bioUser").val(userData.username || 'Admin');
+  });
+  $("#notifBiometrikSEP").html('');
+  $("#submitApprovalBiometrik").hide();
+  $("#modalBiometrikSEP").modal("show");
+});
+
+// Handler submit pengajuan fingerprint
+$("#modalBiometrikSEP").on("click", "#submitPengajuanBiometrik", function() {
+  var baseURL = mlite.url + '/' + mlite.admin;
+  var data = {
+    noKartu: $("#bioNoKartu").val(),
+    tglSep: $("#bioTglSep").val(),
+    jnsPelayanan: $("#bioJnsPelayanan").val(),
+    jnsPengajuan: '2',
+    keterangan: $("#bioKeterangan").val(),
+    user: $("#bioUser").val()
+  };
+  $("#notifBiometrikSEP").html('<span class="text-info">Memproses pengajuan...</span>');
+  $.ajax({
+    url: baseURL + '/rawat_inap/pengajuanFingerprintSEP?t=' + mlite.token,
+    method: 'POST',
+    data: data,
+    success: function(res) {
+      var result = {};
+      try { result = JSON.parse(res); } catch(e) { result = res; }
+      if(result && result.metaData && result.metaData.code == '200') {
+        $("#notifBiometrikSEP").html('<span class="text-success">' + result.metaData.message + '</span>');
+        $("#submitApprovalBiometrik").show();
+      } else {
+        $("#notifBiometrikSEP").html('<span class="text-danger">' + (result.metaData ? result.metaData.message : res) + '</span>');
+        $("#submitApprovalBiometrik").hide();
+      }
+    },
+    error: function() {
+      $("#notifBiometrikSEP").html('<span class="text-danger">Terjadi kesalahan koneksi.</span>');
+      $("#submitApprovalBiometrik").hide();
+    }
+  });
+});
+
+// Handler submit approval fingerprint
+$("#modalBiometrikSEP").on("click", "#submitApprovalBiometrik", function() {
+  var baseURL = mlite.url + '/' + mlite.admin;
+  var data = {
+    noKartu: $("#bioNoKartu").val(),
+    tglSep: $("#bioTglSep").val(),
+    jnsPelayanan: $("#bioJnsPelayanan").val(),
+    jnsPengajuan: '2',
+    keterangan: $("#bioKeterangan").val(),
+    user: $("#bioUser").val()
+  };
+  $("#notifBiometrikSEP").html('<span class="text-info">Memproses approval...</span>');
+  $.ajax({
+    url: baseURL + '/rawat_inap/approvalFingerprintSEP?t=' + mlite.token,
+    method: 'POST',
+    data: data,
+    success: function(res) {
+      var result = {};
+      try { result = JSON.parse(res); } catch(e) { result = res; }
+      if(result && result.metaData && result.metaData.code == '200') {
+        $("#notifBiometrikSEP").html('<span class="text-success">' + result.metaData.message + '</span>');
+      } else {
+        $("#notifBiometrikSEP").html('<span class="text-danger">' + (result.metaData ? result.metaData.message : res) + '</span>');
+      }
+    },
+    error: function() {
+      $("#notifBiometrikSEP").html('<span class="text-danger">Terjadi kesalahan koneksi.</span>');
     }
   });
 });

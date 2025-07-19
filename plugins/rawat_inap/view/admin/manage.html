@@ -6,7 +6,6 @@
           <span class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
             <i class="fa fa-calendar"></i><span class="hidden-xs" style="font-size: 14px;"> Periode Rawat</span>
           </span>
-          <button type="button" class="btn btn-info btn-sm" id="btnListUpdtglplg"><i class="fa fa-list"></i> List Update Tgl Pulang SEP</button>
           <ul class="dropdown-menu dropdown-menu-right">
             <li style="padding-left:5px;padding-right:5px;">
               <input type="text" id="periode_rawat_inap" class="form-control periode_rawat_inap" name="periode_rawat_inap" required>
@@ -26,9 +25,12 @@
             <li style="padding-left:5px;padding-right:5px;margin-top:5px;">
               <div id="lunas_periode_rawat_inap" class="btn btn-primary btn-block" style="text-align: left !important;">Sudah Bayar</div>
             </li>
+            <li role="separator" class="divider"></li>
+            <li style="padding-left:5px;padding-right:5px;margin-top:5px;">
+              <div id="btnListUpdtglplg" class="btn btn-info btn-block" style="text-align: left !important;"><i class="fa fa-list"></i> List Update Tgl Pulang SEP <span class="badge" style="background-color: #28a745;">BPJS</span></div>
+            </li>
           </ul>
         </div>
-        <button type="button" class="btn btn-info btn-sm pull-right" id="btnListUpdtglplg" style="margin-right:10px;"><i class="fa fa-list"></i> List Update Tgl Pulang SEP</button>
         <h3 class="panel-title">Kelola Pasien</h3>
       </div>
       <div class="panel-body">
@@ -81,7 +83,7 @@
 </div>
 <!-- Modal List Data Update Tanggal Pulang SEP -->
 <div class="modal fade" id="modalListUpdtglplg" tabindex="-1" role="dialog" aria-labelledby="modalListUpdtglplgLabel">
-  <div class="modal-dialog modal-lg" role="document">
+  <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
