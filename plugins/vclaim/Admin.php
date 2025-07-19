@@ -1211,39 +1211,40 @@ class Admin extends AdminModule
 
   public function getFrista($keyword)
   {
-    $dateNow = date('Y-m-d');
-    date_default_timezone_set('UTC');
-    $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
-    $key = $this->consid . $this->secretkey . $tStamp;
-
-    $url = $this->api_url . '/SEP/FingerPrint/Peserta/' . $keyword . '/TglPelayanan/'.$dateNow.'';
-    $output = BpjsService::get($url, NULL, $this->consid, $this->secretkey, $this->user_key, $tStamp);
-    $json = json_decode($output, true);
-    //echo json_encode($json);
-    $code = $json['metaData']['code'];
-    $message = $json['metaData']['message'];
-    $stringDecrypt = stringDecrypt($key, $json['response']);
-    $decompress = '""';
-    if (!empty($stringDecrypt)) {
-      $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent(($stringDecrypt));
-    }
-    if ($json != null) {
-      echo '{
-          	"metaData": {
-          		"code": "' . $code . '",
-          		"message": "' . $message . '"
-          	},
-          	"response": ' . $decompress . '}';
-    } else {
-      echo '{
-          	"metaData": {
-          		"code": "5000",
-          		"message": "ERROR"
-          	},
-          	"response": "ADA KESALAHAN ATAU SAMBUNGAN KE SERVER BPJS TERPUTUS."}';
-    }
-
-    exit();
+      $dateNow = date('Y-m-d');
+      $_POST['sep_user']  = $this->core->getUserInfo('fullname', null, true);
+      date_default_timezone_set('UTC');
+      $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+      $key = $this->consid . $this->secretkey . $tStamp;
+      $data = [
+        'request' => [
+          't_sep' => [
+            'noKartu' => $keyword,
+            'tglSep' => $dateNow,
+            'jnsPelayanan' => '2',
+            'jnsPengajuan' => '2',
+            'keterangan' => 'Approval Finger Manual',
+            'user' => $_POST['sep_user']
+          ]
+        ]
+      ];
+      $data = json_encode($data);
+      $url = $this->api_url . '/Sep/aprovalSEP';
+      $output = \Systems\Lib\BpjsService::post($url, $data, $this->consid, $this->secretkey, $this->user_key, $tStamp);
+      $result = json_decode($output, true);
+      if (isset($result['response']) && is_string($result['response'])) {
+          $stringDecrypt = function_exists('stringDecrypt') ? stringDecrypt($key, $result['response']) : $result['response'];
+          $decompress = '';
+          if (!empty($stringDecrypt) && class_exists('LZCompressor\\LZString')) {
+              $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent($stringDecrypt);
+          } else {
+              $decompress = $stringDecrypt;
+          }
+          $jsonTest = json_decode($decompress, true);
+          $result['response'] = $jsonTest !== null ? $jsonTest : $decompress;
+      }
+      echo json_encode($result);
+      exit();
   }
 
   public function getApproveFinger($keyword)
@@ -3494,6 +3495,103 @@ class Admin extends AdminModule
     $this->core->addCSS(url('assets/css/bootstrap-datetimepicker.css'));
     $this->core->addJS(url('assets/jscripts/moment-with-locales.js'));
     $this->core->addJS(url('assets/jscripts/bootstrap-datetimepicker.js'));
+  }
+
+  // --- [TAMBAHAN] Pengajuan SEP ---
+  public function postPengajuanSEP()
+  {
+      $input = isset($_POST['data']) ? json_decode($_POST['data'], true) : [];
+      if (!$input || !isset($input['request']['t_sep'])) {
+          echo json_encode(['metaData' => ['code' => 400, 'message' => 'Request tidak valid']]);
+          exit();
+      }
+      $data = json_encode($input);
+      date_default_timezone_set('UTC');
+      $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+      $url = $this->api_url . 'Sep/pengajuanSEP';
+      $output = \Systems\Lib\BpjsService::post($url, $data, $this->consid, $this->secretkey, $this->user_key, $tStamp);
+      echo $output;
+      exit();
+  }
+
+  // --- [TAMBAHAN] Approval SEP ---
+  public function postApprovalSEP()
+  {
+      $input = isset($_POST['data']) ? json_decode($_POST['data'], true) : [];
+      if (!$input || !isset($input['request']['t_sep'])) {
+          echo json_encode(['metaData' => ['code' => 400, 'message' => 'Request tidak valid']]);
+          exit();
+      }
+      $data = json_encode($input);
+      date_default_timezone_set('UTC');
+      $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+      $url = $this->api_url . 'Sep/aprovalSEP';
+      $output = \Systems\Lib\BpjsService::post($url, $data, $this->consid, $this->secretkey, $this->user_key, $tStamp);
+      $result = json_decode($output, true);
+      $key = $this->consid . $this->secretkey . $tStamp;
+      if (isset($result['response']) && is_string($result['response'])) {
+          $stringDecrypt = function_exists('stringDecrypt') ? stringDecrypt($key, $result['response']) : $result['response'];
+          $decompress = '';
+          if (!empty($stringDecrypt) && class_exists('LZCompressor\\LZString')) {
+              $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent($stringDecrypt);
+          } else {
+              $decompress = $stringDecrypt;
+          }
+          $jsonTest = json_decode($decompress, true);
+          $result['response'] = $jsonTest !== null ? $jsonTest : $decompress;
+      }
+      echo json_encode($result);
+      exit();
+  }
+
+  // --- [TAMBAHAN] GET Fingerprint ---
+  public function getFingerprint($noKartu, $tglPelayanan)
+  {
+      date_default_timezone_set('UTC');
+      $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+      $url = $this->api_url . 'SEP/FingerPrint/Peserta/' . $noKartu . '/TglPelayanan/' . $tglPelayanan;
+      $output = \Systems\Lib\BpjsService::get($url, NULL, $this->consid, $this->secretkey, $this->user_key, $tStamp);
+      error_log('[BPJS Fingerprint Response] ' . $output);
+      $data = json_decode($output, true);
+      $key = $this->consid . $this->secretkey . $tStamp;
+      if (isset($data['response'])) {
+          $stringDecrypt = function_exists('stringDecrypt') ? stringDecrypt($key, $data['response']) : $data['response'];
+          $decompress = '';
+          if (!empty($stringDecrypt) && class_exists('LZCompressor\\LZString')) {
+              $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent($stringDecrypt);
+          } else {
+              $decompress = $stringDecrypt;
+          }
+          // Jika hasil decompress valid JSON, decode
+          $jsonTest = json_decode($decompress, true);
+          $data['response'] = $jsonTest !== null ? $jsonTest : $decompress;
+      }
+      echo json_encode($data);
+      exit();
+  }
+
+  // --- [TAMBAHAN] List Persetujuan SEP ---
+  public function getListPersetujuanSEP($bulan, $tahun)
+  {
+      date_default_timezone_set('UTC');
+      $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+      $url = $this->api_url . 'Sep/persetujuanSEP/list/bulan/' . $bulan . '/tahun/' . $tahun;
+      $output = \Systems\Lib\BpjsService::get($url, NULL, $this->consid, $this->secretkey, $this->user_key, $tStamp);
+      $data = json_decode($output, true);
+      $key = $this->consid . $this->secretkey . $tStamp;
+      if (isset($data['response']) && is_string($data['response'])) {
+          $stringDecrypt = function_exists('stringDecrypt') ? stringDecrypt($key, $data['response']) : $data['response'];
+          $decompress = '';
+          if (!empty($stringDecrypt) && class_exists('LZCompressor\\LZString')) {
+              $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent($stringDecrypt);
+          } else {
+              $decompress = $stringDecrypt;
+          }
+          $jsonTest = json_decode($decompress, true);
+          $data['response'] = $jsonTest !== null ? $jsonTest : $decompress;
+      }
+      echo json_encode($data);
+      exit();
   }
 
 }

@@ -209,8 +209,12 @@
                 <div class="form-group clearfix">
                   <label for="" class="col-sm-3 control-label">Jenis Layanan</label>
                   <div class="col-sm-6">
-                    <input type="text" name="sep_pelayanan_nama" id="sep_pelayanan_nama" class="form-control" value="">
-                    <ul class="list-group" id="pelayananList" style="z-index:1000;position:absolute;width:100%;"></ul>
+                    <select class="form-control" id="sep_pelayanan_nama_select" style="background:#fff;cursor:pointer;" autocomplete="off">
+                      <option value="">-- Pilih Jenis Layanan --</option>
+                      <option value="1">Rawat Inap</option>
+                      <option value="2">Rawat Jalan</option>
+                    </select>
+                    <input type="hidden" name="sep_pelayanan_nama" id="sep_pelayanan_nama" class="form-control" value="">
                   </div>
                   <label for="" class="col-sm-1 control-label">Kode</label>
                   <div class="col-sm-2">
@@ -502,6 +506,9 @@
           </div>
           <div class="panel-footer">
             <input type="submit" id="simpan" class="btn btn-primary" name="" value="Simpan">
+            <!-- <button type="button" class="btn btn-info" id="list_persetujuan_sep">List Persetujuan SEP</button> -->
+            <button type="button" class="btn btn-info" id="pengajuan_sep">Pengajuan SEP</button>
+            <button type="button" class="btn btn-success" id="approval_sep">Approval SEP</button>
             <!-- <button type="button" name="button" class="btn btn-success" id="finger">Cek Finger</button> -->
             <div class="btn-group">
               <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Biometrik <span class="caret"></span></button>
@@ -571,6 +578,87 @@
       <div class="modal-content">
           ...
       </div>
+  </div>
+</div>
+<!-- Modal Pengajuan/Approval SEP -->
+<div class="modal fade" id="modalPengajuanApprovalSEP" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modalPengajuanApprovalSEPLabel">Pengajuan/Approval SEP</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form id="formPengajuanApprovalSEP">
+          <div class="form-group">
+            <label for="modal_jns_pelayanan">Jenis Layanan</label>
+            <select class="form-control" id="modal_jns_pelayanan" name="modal_jns_pelayanan" required style="background:#fff;cursor:pointer;">
+              <option value="">-- Pilih Jenis Layanan --</option>
+              <option value="1">Rawat Inap</option>
+              <option value="2">Rawat Jalan</option>
+            </select>
+          </div>
+          <div class="form-group" id="form_modal_jnsPengajuan">
+            <label for="modal_jnsPengajuan">Jenis Pengajuan</label>
+            <select class="form-control" id="modal_jnsPengajuan" name="modal_jnsPengajuan" required style="background:#fff;cursor:pointer;">
+              <option value="">-- Pilih Jenis Pengajuan --</option>
+              <option value="1">Backdate</option>
+              <option value="2">Fingerprint</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="keterangan_sep">Keterangan</label>
+            <input type="text" class="form-control" id="keterangan_sep" name="keterangan_sep" placeholder="Keterangan (misal: Hari libur)" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="submitPengajuanApprovalSEP">Kirim</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal List Persetujuan SEP -->
+<div class="modal fade" id="modalListPersetujuanSEP" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">List Persetujuan SEP</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <form id="formListPersetujuanSEP" class="form-inline" style="margin-bottom:10px;">
+          <div class="form-group">
+            <label for="bulan_list_sep">Bulan</label>
+            <select class="form-control" id="bulan_list_sep" name="bulan_list_sep" required>
+              <option value="">Bulan</option>
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-left:10px;">
+            <label for="tahun_list_sep">Tahun</label>
+            <input type="number" class="form-control" id="tahun_list_sep" name="tahun_list_sep" min="2000" max="2100" value="{?=date('Y')?}" required style="width:100px;">
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-left:10px;">Tampilkan</button>
+        </form>
+        <div id="hasilListPersetujuanSEP"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+      </div>
+    </div>
   </div>
 </div>
 <script type="text/javascript">
@@ -732,15 +820,28 @@
     var baseURL = mlite.url + '/' + mlite.admin;
     event.preventDefault();
     var no_kartu = $('#sep_no_kartu').val();
-    var url = baseURL + '/vclaim/finger/' + no_kartu + '?t=' + mlite.token
-    $.get(url,function (data) {
-      var data = JSON.parse(data);
-      if(data.response.status == 'Peserta belum melakukan validasi finger print') {
-        openFingerprint(no_kartu);
-      } else {
-        alert(data.response.status)
+    var tgl_pelayanan = $('#sep_tanggal_sep').val();
+    if(!no_kartu || !tgl_pelayanan) {
+      alert('Nomor kartu dan tanggal pelayanan harus diisi!');
+      return;
+    }
+    var url = baseURL + '/vclaim/fingerprint/' + no_kartu + '/' + tgl_pelayanan + '?t=' + mlite.token;
+    $.get(url, function (data) {
+      try {
+        var data = JSON.parse(data);
+        if(data.metaData && data.metaData.message) {
+          if(data.response && data.response.status) {
+            alert(data.response.status);
+          } else {
+            alert(data.metaData.message);
+          }
+        } else {
+          alert('Gagal mendapatkan data fingerprint');
+        }
+      } catch(e) {
+        alert('Gagal parsing response fingerprint');
       }
-    })
+    });
   });
   $("#form_sep").on("click","#frista", function(event){
     var baseURL = mlite.url + '/' + mlite.admin;
@@ -1869,3 +1970,141 @@ async function openFrista(noka) {
 
  });
  </script>
+<script type="text/javascript">
+// Handler untuk button Pengajuan SEP
+$("#form_sep").on("click", "#pengajuan_sep", function(event) {
+  event.preventDefault();
+  $('#modalPengajuanApprovalSEPLabel').text('Pengajuan SEP');
+  $('#form_modal_jnsPengajuan').show();
+  $('#modal_jnsPengajuan').val('2');
+  $('#modalPengajuanApprovalSEP').modal('show');
+  $('#submitPengajuanApprovalSEP').data('action', 'pengajuan');
+});
+// Handler untuk button Approval SEP
+$("#form_sep").on("click", "#approval_sep", function(event) {
+  event.preventDefault();
+  $('#modalPengajuanApprovalSEPLabel').text('Approval SEP');
+  $('#form_modal_jnsPengajuan').show();
+  $('#modal_jnsPengajuan').val('1');
+  $('#modalPengajuanApprovalSEP').modal('show');
+  $('#submitPengajuanApprovalSEP').data('action', 'approval');
+});
+// Handler submit modal
+$('#submitPengajuanApprovalSEP').on('click', function() {
+  var action = $(this).data('action');
+  var keterangan = $('#keterangan_sep').val();
+  var jnsPengajuan = $('#modal_jnsPengajuan').val();
+  var noKartu = $('#sep_no_kartu').val();
+  var tglSep = $('#sep_tanggal_sep').val();
+  var jnsPelayanan = $('#modal_jns_pelayanan').val();
+  var user = mlite.user || 'SIMRS';
+  var url = '';
+  var data = {
+    request: {
+      t_sep: {
+        noKartu: noKartu,
+        tglSep: tglSep,
+        jnsPelayanan: jnsPelayanan,
+        keterangan: keterangan,
+        user: user
+      }
+    }
+  };
+  if(action === 'pengajuan') {
+    url = mlite.url + '/' + mlite.admin + '/vclaim/pengajuansep?t=' + mlite.token;
+    data.request.t_sep.jnsPengajuan = jnsPengajuan;
+  } else if(action === 'approval') {
+    url = mlite.url + '/' + mlite.admin + '/vclaim/approvalsep?t=' + mlite.token;
+    data.request.t_sep.jnsPengajuan = jnsPengajuan;
+  }
+  // Kirim request
+  $.ajax({
+    type: 'POST',
+    url: url,
+    data: { data: JSON.stringify(data) },
+    contentType: 'application/x-www-form-urlencoded',
+    success: function(response) {
+      alert(response);
+      $('#modalPengajuanApprovalSEP').modal('hide');
+    },
+    error: function(xhr) {
+      alert('Terjadi kesalahan: ' + xhr.statusText);
+    }
+  });
+});
+</script>
+<script type="text/javascript">
+// Dropdown Jenis Layanan: update kode dan nama otomatis
+$('#sep_pelayanan_nama_select').on('change', function() {
+  var val = $(this).val();
+  var text = $(this).find('option:selected').text();
+  $('#sep_pelayanan_kode').val(val);
+  $('#sep_pelayanan_nama').val(text);
+});
+// Jika ada value sebelumnya, set dropdown
+$(document).ready(function() {
+  var kode = $('#sep_pelayanan_kode').val();
+  if (kode) {
+    $('#sep_pelayanan_nama_select').val(kode);
+  }
+});
+// Validasi sebelum submit pengajuan/approval SEP
+$('#submitPengajuanApprovalSEP').on('click', function() {
+  var jnsPelayanan = $('#sep_pelayanan_kode').val();
+  if (jnsPelayanan !== '1' && jnsPelayanan !== '2') {
+    alert('Jenis Layanan harus dipilih!');
+    return;
+  }
+  if (jnsPengajuan !== '1' && jnsPengajuan !== '2') {
+    alert('Jenis Pengajuan harus dipilih!');
+    return;
+  }
+  // ... existing code ...
+});
+</script>
+<script type="text/javascript">
+// Handler button List Persetujuan SEP
+$("#form_sep").on("click", "#list_persetujuan_sep", function(event) {
+  event.preventDefault();
+  $('#modalListPersetujuanSEP').modal('show');
+  $('#hasilListPersetujuanSEP').html('');
+});
+// Handler submit form List Persetujuan SEP
+$('#formListPersetujuanSEP').on('submit', function(event) {
+  event.preventDefault();
+  var bulan = $('#bulan_list_sep').val();
+  var tahun = $('#tahun_list_sep').val();
+  if (!bulan || !tahun) {
+    alert('Bulan dan tahun harus diisi!');
+    return;
+  }
+  var baseURL = mlite.url + '/' + mlite.admin;
+  var url = baseURL + '/vclaim/listpersetujuansep/' + bulan + '/' + tahun + '?t=' + mlite.token;
+  $('#hasilListPersetujuanSEP').html('<i>Loading...</i>');
+  $.get(url, function(data) {
+    try {
+      var data = JSON.parse(data);
+      if(data.metaData && data.metaData.code == '200' && data.response && data.response.list) {
+        var list = data.response.list;
+        var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr><th>No Kartu</th><th>Nama</th><th>Tgl SEP</th><th>Jenis Pelayanan</th><th>Persetujuan</th><th>Status</th></tr></thead><tbody>';
+        for(var i=0; i<list.length; i++) {
+          html += '<tr>' +
+            '<td>' + list[i].noKartu + '</td>' +
+            '<td>' + list[i].nama + '</td>' +
+            '<td>' + list[i].tglsep + '</td>' +
+            '<td>' + list[i].jnspelayanan + '</td>' +
+            '<td>' + list[i].persetujuan + '</td>' +
+            '<td>' + list[i].status + '</td>' +
+            '</tr>';
+        }
+        html += '</tbody></table></div>';
+        $('#hasilListPersetujuanSEP').html(html);
+      } else {
+        $('#hasilListPersetujuanSEP').html('<div class="alert alert-warning">' + (data.metaData ? data.metaData.message : 'Data tidak ditemukan') + '</div>');
+      }
+    } catch(e) {
+      $('#hasilListPersetujuanSEP').html('<div class="alert alert-danger">Gagal parsing response</div>');
+    }
+  });
+});
+</script>
