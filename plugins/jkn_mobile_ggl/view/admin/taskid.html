@@ -1,0 +1,263 @@
+<style media="screen">
+  th, td {
+    white-space: nowrap;
+    vertical-align: top !important;
+  }
+</style>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="panel panel-default">
+              <div class="panel-heading">
+                  <div class="btn-group pull-right" style="margin-top:-8px;">
+                    <span class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
+                      <i class="fa fa-calendar"></i><span class="hidden-xs"> Periode Antrol</span>
+                    </span>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <form class="" action="{?=url([ADMIN,'jkn_mobile','taskid'])?}" method="POST">
+                      <li style="padding-left:5px;padding-right:5px;">
+                        <input type="text" id="periode_antrol" class="form-control periode_antrol" name="periode_antrol" required>
+                      </li>
+                      <li style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                        <input type="submit" name="" class="btn btn-primary btn-block" value="Submit">
+                      </li>
+                      </form>
+                    </ul>
+                  </div>
+                  <button class="btn btn-success btn-sm" id="bulkUpdateBtn"><i class="fa fa-bolt"></i> Bulk Update & Kirim ke BPJS</button>
+                  <button class="btn btn-info btn-sm" id="bulkAutoOrderBtn"><i class="fa fa-sort-amount-asc"></i> Bulk Auto Order & Simpan</button>
+                  <div class="pull-right" style="margin-right:10px;display:inline-block;">
+                    <label for="pageSizeSelect" style="margin-bottom:0;">Tampilkan
+                      <select id="pageSizeSelect" class="form-control input-sm" style="width:auto;display:inline-block;">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    data</label>
+                  </div>
+                  <h3 class="panel-title">Task ID JKN Mobile</h3>
+              </div>
+              <div class="panel-body">
+                <div class="table-responsive no-margin">
+                  <table class="table table-condensed no-margin display no-wrap" width="100%">
+                    <thead>
+                      <tr>
+                        <th><input type="checkbox" id="selectAllTaskId"></th>
+                        <th>No RM</th>
+                        <th>JB</th>
+                        <th>Status</th>
+                        <th>Nama Pasien</th>
+                        <th>Tanggal</th>
+                        <th>No Rawat</th>
+                        <th>Poliklinik</th>
+                        <th>Dokter</th>
+                        <th>Nomor Referensi</th>
+                        <th>Task 1</th>
+                        <th>Task 2</th>
+                        <th>Task 3</th>
+                        <th>Task 4</th>
+                        <th>Task 5</th>
+                        <th>Task 6</th>
+                        <th>Task 7</th>
+                        <th>Task 99</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {loop: $taskid}
+                      <tr>
+                        <td><input type="checkbox" class="taskid-checkbox" value="{$value.no_rawat}"></td>
+                        <td>{$value.no_rkm_medis}</td>                        
+                        <td>{$value.png_jawab}</td> 
+                        <td>{$value.status_kirim}</td> 
+                        <td>{?=$this->core->getPasienInfo('nm_pasien', $value.no_rkm_medis)?}</td>
+                        <td>{$value.tgl_registrasi}</td>
+                        <td><a href="{?=url([ADMIN,'jkn_mobile','taskidinput', convertNoRawat($value.no_rawat)])?}" data-toggle="modal" data-target="#asuransiModal">{$value.no_rawat}</a></td>
+                        <td>{$value.nm_poli}</td>
+                        <td>{$value.nm_dokter}</td>
+                        <td>{$value.nomor_referensi}</td>
+                        <td>{$value.task1}</td>
+                        <td>{$value.task2}</td>
+                        <td>{$value.task3}</td>
+                        <td>{$value.task4}</td>
+                        <td>{$value.task5}</td>
+                        <td>{$value.task6}</td>
+                        <td>{$value.task7}</td>
+                        <td>{$value.task99}</td>
+                      </tr>
+                      {/loop}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="asuransiModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            ...
+        </div>
+    </div>
+</div>
+<!-- Modal Konfirmasi Bulk Update -->
+<div class="modal fade" id="bulkConfirmModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Konfirmasi Bulk Update & Kirim ke BPJS</h4>
+      </div>
+      <div class="modal-body">
+        <p>Anda yakin ingin melakukan update & kirim ke BPJS untuk data yang dipilih?</p>
+        <ul id="bulkListPreview"></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirmBulkUpdate">Ya, Lanjutkan</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Konfirmasi Bulk Auto Order -->
+<div class="modal fade" id="bulkAutoOrderModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Konfirmasi Bulk Auto Order & Simpan</h4>
+      </div>
+      <div class="modal-body">
+        <p>Anda yakin ingin melakukan auto order & simpan ke database untuk data yang dipilih?</p>
+        <ul id="bulkAutoOrderListPreview"></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirmBulkAutoOrder">Ya, Lanjutkan</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.periode_antrol').datetimepicker({
+            defaultDate: "{?=date('Y-m-d')?}",
+            format: 'YYYY-MM-DD',
+            locale: 'id'
+        });
+    });
+    $(document).ready(function() {
+        // Select all checkbox
+        $('#selectAllTaskId').on('change', function() {
+            $('.taskid-checkbox').prop('checked', this.checked);
+        });
+        // Bulk update button
+        $('#bulkUpdateBtn').on('click', function() {
+            var selected = $('.taskid-checkbox:checked');
+            if(selected.length === 0) {
+                alert('Pilih minimal satu data!');
+                return;
+            }
+            // Preview list
+            var list = '';
+            selected.each(function() {
+                list += '<li>' + $(this).closest('tr').find('td:eq(6)').text() + ' - ' + $(this).closest('tr').find('td:eq(4)').text() + '</li>';
+            });
+            $('#bulkListPreview').html(list);
+            $('#bulkConfirmModal').modal('show');
+        });
+        // Konfirmasi bulk update
+        $('#confirmBulkUpdate').on('click', function() {
+            var noRawats = $('.taskid-checkbox:checked').map(function(){ return $(this).val(); }).get();
+            // TODO: AJAX ke endpoint bulk update & kirim ke BPJS
+            alert('Bulk update & kirim ke BPJS untuk: ' + noRawats.join(', '));
+            $('#bulkConfirmModal').modal('hide');
+        });
+        // Bulk Auto Order button
+        $('#bulkAutoOrderBtn').on('click', function() {
+            var selected = $('.taskid-checkbox:checked');
+            if(selected.length === 0) {
+                alert('Pilih minimal satu data!');
+                return;
+            }
+            // Preview list
+            var list = '';
+            selected.each(function() {
+                list += '<li>' + $(this).closest('tr').find('td:eq(6)').text() + ' - ' + $(this).closest('tr').find('td:eq(4)').text() + '</li>';
+            });
+            $('#bulkAutoOrderListPreview').html(list);
+            $('#bulkAutoOrderModal').modal('show');
+        });
+        // Konfirmasi bulk auto order
+        $('#confirmBulkAutoOrder').on('click', function() {
+            var selectedRows = $('.taskid-checkbox:checked').closest('tr');
+            var bulkData = [];
+            selectedRows.each(function() {
+                var row = $(this);
+                // Ambil semua task id
+                var taskInputs = [10,11,12,13,14,15,16].map(function(idx){
+                    return row.find('td:eq('+idx+')').text();
+                });
+                // Urutkan dan proses waktu
+                var values = taskInputs.filter(function(val){ return val && val !== '' && val !== '0000-00-00 00:00:00'; });
+                values.sort();
+                var lastDateTime = null;
+                for(var i=0; i<values.length; i++) {
+                    var dt = new Date(values[i].replace(' ', 'T'));
+                    // Set minimal jam 8 pagi
+                    var jam = dt.getHours();
+                    if(jam < 8) {
+                        dt.setHours(8,0,0,0);
+                    }
+                    // Jika sama dengan sebelumnya, tambah 1 menit
+                    if(lastDateTime && dt.getTime() <= lastDateTime.getTime()) {
+                        dt = new Date(lastDateTime.getTime() + 60000); // tambah 1 menit
+                    }
+                    lastDateTime = dt;
+                    // Format kembali ke string
+                    var yyyy = dt.getFullYear();
+                    var mm = ('0'+(dt.getMonth()+1)).slice(-2);
+                    var dd = ('0'+dt.getDate()).slice(-2);
+                    var hh = ('0'+dt.getHours()).slice(-2);
+                    var min = ('0'+dt.getMinutes()).slice(-2);
+                    var ss = ('0'+dt.getSeconds()).slice(-2);
+                    values[i] = yyyy+'-'+mm+'-'+dd+' '+hh+':'+min+':'+ss;
+                }
+                // Update kolom Task 1-7 di tabel
+                for(var i=0; i<7; i++) {
+                    row.find('td:eq('+(10+i)+')').text(values[i] || '');
+                }
+                // Siapkan data untuk backend jika ingin AJAX
+                var dataObj = {
+                    no_rawat: row.find('td:eq(6)').text(),
+                    taskid: {}
+                };
+                for(var i=0; i<7; i++) {
+                    dataObj.taskid['taskid'+(i+1)] = values[i] || '';
+                }
+                bulkData.push(dataObj);
+            });
+            alert('Bulk auto order selesai! Kolom Task ID sudah diurutkan dan diperbaiki.');
+            $('#bulkAutoOrderModal').modal('hide');
+            // AJAX ke backend untuk simpan ke database
+            $.ajax({
+                url: mlite.url + '/' + mlite.admin + '/jkn_mobile/bulksavetaskid',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(bulkData),
+                success: function(res) {
+                    alert('Bulk auto order & simpan ke database berhasil!');
+                    location.reload(); // reload halaman agar data tabel sinkron dengan database
+                },
+                error: function() {
+                    alert('Gagal simpan ke database!');
+                }
+            });
+        });
+        // Page size selector
+        $('#pageSizeSelect').on('change', function() {
+            var pageSize = parseInt($(this).val());
+            if ($('.display').length && typeof $('.display').DataTable === 'function') {
+                $('.display').DataTable().page.len(pageSize).draw();
+            }
+        });
+    });
+</script>
