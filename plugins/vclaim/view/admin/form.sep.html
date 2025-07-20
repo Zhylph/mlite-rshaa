@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <div id="form_sep">
   <div class="col-md-3">
     <div class="panel panel-default">
@@ -46,6 +47,62 @@
                               <button type="submit" class="btn btn-danger" id="parameter_no_rujukan_pcare">
                                   Kirim Parameter
                               </button>
+                              <button type="button" class="btn btn-info" id="list_rujukan_pcare" style="margin-left:6px;">
+                                  <i class="fa fa-list"></i> List Rujukan
+                              </button>
+                              <!-- Tambahkan modal untuk hasil list rujukan -->
+                              <div class="modal fade" id="modalListRujukan" tabindex="-1" role="dialog">
+                                <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">List Rujukan Berdasarkan Nomor Kartu</h4>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                    <div class="modal-body" id="hasilListRujukan"></div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <script type="text/javascript">
+                                // Handler List Rujukan
+                                $('#list_rujukan_pcare').on('click', function() {
+                                  var no_kartu = $('input:text[name=no_kartu_pcare]').val();
+                                  if(!no_kartu) {
+                                    alert('Nomor kartu harus diisi!');
+                                    return;
+                                  }
+                                  var baseURL = mlite.url + '/' + mlite.admin;
+                                  var url = baseURL + '/vclaim/wsrujukanlistpeserta/' + no_kartu + '?t=' + mlite.token;
+                                  $('#hasilListRujukan').html('<i>Loading...</i>');
+                                  $('#modalListRujukan').modal('show');
+                                  $.get(url, function(data) {
+                                    try {
+                                      var data = JSON.parse(data);
+                                      if(data.metaData && data.metaData.code == '200' && data.response && data.response.rujukan) {
+                                        var list = data.response.rujukan;
+                                        var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr><th>No. Kunjungan</th><th>Tgl Kunjungan</th><th>Diagnosa</th><th>Poli Rujukan</th><th>Provider Perujuk</th></tr></thead><tbody>';
+                                        for(var i=0; i<list.length; i++) {
+                                          html += '<tr>' +
+                                            '<td>' + list[i].noKunjungan + '</td>' +
+                                            '<td>' + list[i].tglKunjungan + '</td>' +
+                                            '<td>' + list[i].diagnosa.kode + ' - ' + list[i].diagnosa.nama + '</td>' +
+                                            '<td>' + list[i].poliRujukan.kode + ' - ' + list[i].poliRujukan.nama + '</td>' +
+                                            '<td>' + list[i].provPerujuk.kode + ' - ' + list[i].provPerujuk.nama + '</td>' +
+                                            '</tr>';
+                                        }
+                                        html += '</tbody></table></div>';
+                                        $('#hasilListRujukan').html(html);
+                                      } else {
+                                        $('#hasilListRujukan').html('<div class="alert alert-warning">' + (data.metaData ? data.metaData.message : 'Data tidak ditemukan') + '</div>');
+                                      }
+                                    } catch(e) {
+                                      $('#hasilListRujukan').html('<div class="alert alert-danger">Gagal parsing response</div>');
+                                    }
+                                  });
+                                });
+                              </script>
                           </div>
                           <div class="tab-pane fade" id="rs-pills">
                               <div class="form-group">
@@ -87,6 +144,62 @@
                               <button type="submit" class="btn btn-danger" id="parameter_no_kartu_pcare">
                                   Kirim Parameter
                               </button>
+                              <button type="button" class="btn btn-info" id="list_rujukan_pcare" style="margin-left:6px;">
+                                  <i class="fa fa-list"></i> List Rujukan
+                              </button>
+                              <!-- Tambahkan modal untuk hasil list rujukan -->
+                              <div class="modal fade" id="modalListRujukan" tabindex="-1" role="dialog">
+                                <div class="modal-dialog modal-lg" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h4 class="modal-title">List Rujukan Berdasarkan Nomor Kartu</h4>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    </div>
+                                    <div class="modal-body" id="hasilListRujukan"></div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <script type="text/javascript">
+                                // Handler List Rujukan
+                                $('#list_rujukan_pcare').on('click', function() {
+                                  var no_kartu = $('input:text[name=no_kartu_pcare]').val();
+                                  if(!no_kartu) {
+                                    alert('Nomor kartu harus diisi!');
+                                    return;
+                                  }
+                                  var baseURL = mlite.url + '/' + mlite.admin;
+                                  var url = baseURL + '/vclaim/wsrujukanlistpeserta/' + no_kartu + '?t=' + mlite.token;
+                                  $('#hasilListRujukan').html('<i>Loading...</i>');
+                                  $('#modalListRujukan').modal('show');
+                                  $.get(url, function(data) {
+                                    try {
+                                      var data = JSON.parse(data);
+                                      if(data.metaData && data.metaData.code == '200' && data.response && data.response.rujukan) {
+                                        var list = data.response.rujukan;
+                                        var html = '<div class="table-responsive"><table class="table table-bordered table-striped"><thead><tr><th>No. Kunjungan</th><th>Tgl Kunjungan</th><th>Diagnosa</th><th>Poli Rujukan</th><th>Provider Perujuk</th></tr></thead><tbody>';
+                                        for(var i=0; i<list.length; i++) {
+                                          html += '<tr>' +
+                                            '<td>' + list[i].noKunjungan + '</td>' +
+                                            '<td>' + list[i].tglKunjungan + '</td>' +
+                                            '<td>' + list[i].diagnosa.kode + ' - ' + list[i].diagnosa.nama + '</td>' +
+                                            '<td>' + list[i].poliRujukan.kode + ' - ' + list[i].poliRujukan.nama + '</td>' +
+                                            '<td>' + list[i].provPerujuk.kode + ' - ' + list[i].provPerujuk.nama + '</td>' +
+                                            '</tr>';
+                                        }
+                                        html += '</tbody></table></div>';
+                                        $('#hasilListRujukan').html(html);
+                                      } else {
+                                        $('#hasilListRujukan').html('<div class="alert alert-warning">' + (data.metaData ? data.metaData.message : 'Data tidak ditemukan') + '</div>');
+                                      }
+                                    } catch(e) {
+                                      $('#hasilListRujukan').html('<div class="alert alert-danger">Gagal parsing response</div>');
+                                    }
+                                  });
+                                });
+                              </script>
                           </div>
                           <div class="tab-pane fade" id="rs2-pills">
                               <div class="form-group">

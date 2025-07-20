@@ -3641,4 +3641,17 @@ class Admin extends AdminModule
     exit();
   }
 
+  // Endpoint: /vclaim/wsrujukanlistpeserta/{no_kartu}
+  public function getWsRujukanListPeserta($no_kartu)
+  {
+    // Gunakan property URL yang sudah pasti ada
+    $base_url = isset($this->vclaim_url) ? $this->vclaim_url : 'https://new-api.bpjs-kesehatan.go.id:8080/new-vclaim-rest';
+    $url = $base_url . '/Rujukan/List/Peserta/' . $no_kartu;
+    $timestamp = '';
+    $result = \Systems\Lib\BpjsService::get($url, [], $this->consid, $this->secretkey, $this->user_key, $timestamp);
+    header('Content-Type: application/json');
+    echo $result;
+    exit;
+  }
+
 }
