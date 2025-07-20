@@ -3594,4 +3594,32 @@ class Admin extends AdminModule
       exit();
   }
 
+  // [BARU] Tampilkan rujukan keluar berdasarkan no_rawat
+  public function getRujukKeluarByNoRawat($no_rawat)
+  {
+    $this->_addHeaderFiles();
+    $bridging_sep = $this->db('bridging_sep')->where('no_rawat', revertNoRawat($no_rawat))->oneArray();
+    $rujuk_keluar = [];
+    if ($bridging_sep && isset($bridging_sep['no_sep'])) {
+      $rujuk_keluar = $this->db('bridging_rujukan_bpjs')->where('no_sep', $bridging_sep['no_sep'])->toArray();
+    }
+    $this->tpl->set('rujuk_keluar', $this->tpl->noParse_array(htmlspecialchars_array($rujuk_keluar)));
+    $this->tpl->set('no_rawat', $no_rawat);
+    echo $this->draw('rujukkeluar.html');
+    exit();
+  }
+
+  // [BARU] Tampilkan tabel rujukan keluar berdasarkan no_rawat (untuk reload ajax)
+  public function getRujukKeluarDisplayByNoRawat($no_rawat)
+  {
+    $rujuk_keluar = $this->db('bridging_rujukan_bpjs')
+      ->join('bridging_sep', 'bridging_sep.no_sep=bridging_rujukan_bpjs.no_sep')
+      ->where('bridging_sep.no_rawat', revertNoRawat($no_rawat))
+      ->toArray();
+    $this->tpl->set('rujuk_keluar', $this->tpl->noParse_array(htmlspecialchars_array($rujuk_keluar)));
+    $this->tpl->set('no_rawat', $no_rawat);
+    echo $this->draw('rujukkeluar.display.html');
+    exit();
+  }
+
 }

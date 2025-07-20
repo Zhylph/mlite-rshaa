@@ -14,12 +14,12 @@
       {loop: $rujuk_keluar}
       <tr>
         <td>{$value.no_rawat}</td>
-        <td id="ubah_kontrol" data-no_surat="{$value.no_surat}" data-no_sep="{$value.no_sep}" data-kd_poli="{$value.kd_poli_bpjs}" data-kd_dokter="{$value.kd_dokter_bpjs}" data-tanggal_kontrol="{$value.tgl_rencana}" data-tanggal_surat="{$value.tgl_surat}">{$value.no_sep}</td>
-        <td class="pilih_nosurat" data-no_surat="{$value.no_surat}">{$value.no_surat}</td>
-        <td>{$value.tgl_surat}</td>
-        <td>{$value.tgl_rencana}</td>
-        <td>{$value.nm_dokter_bpjs}</td>
-        <td>{$value.nm_poli_bpjs}</td>
+        <td>{$value.no_sep}</td>
+        <td>{$value.no_rujukan}</td>
+        <td>{$value.tglRujukan}</td>
+        <td>{$value.tglRencanaKunjungan}</td>
+        <td>{$value.user}</td>
+        <td>{$value.nama_poliRujukan}</td>
       </tr>
       {/loop}
     </tbody>
