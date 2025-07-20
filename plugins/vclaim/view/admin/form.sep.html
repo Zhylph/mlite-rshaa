@@ -506,10 +506,27 @@
           </div>
           <div class="panel-footer">
             <input type="submit" id="simpan" class="btn btn-primary" name="" value="Simpan">
-            <!-- <button type="button" class="btn btn-info" id="list_persetujuan_sep">List Persetujuan SEP</button> -->
-            <button type="button" class="btn btn-info" id="pengajuan_sep">Pengajuan SEP</button>
-            <button type="button" class="btn btn-success" id="approval_sep">Approval SEP</button>
-            <!-- <button type="button" name="button" class="btn btn-success" id="finger">Cek Finger</button> -->
+            <div class="btn-group">
+              <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pengajuan/Approval SEP <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="pengajuan_sep">Pengajuan SEP</a></li>
+                <li><a href="#" id="approval_sep">Approval SEP</a></li>
+              </ul>
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kontrol/SPRI <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="kontrol">Kontrol</a></li>
+                <li><a href="#" id="spri">SPRI</a></li>
+              </ul>
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rujuk Keluar/PRB <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="rujukkeluar">Rujuk Keluar</a></li>
+                <li><a href="#" id="prb">PRB</a></li>
+              </ul>
+            </div>
             <div class="btn-group">
               <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Biometrik <span class="caret"></span></button>
               <ul class="dropdown-menu">
@@ -517,7 +534,6 @@
                 <li><a href="#" class="" id="frista">Face Recognition</a></li>
               </ul>
             </div>
-            <!--<button type="button" name="button" class="btn btn-warning" id="sync_sep">Sync SEP</button>-->
             <div class="btn-group">
               <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Antrian <span class="caret"></span></button>
               <ul class="dropdown-menu">
@@ -527,10 +543,6 @@
                 <li><a href="#" class="add_antrian" data-jenis_kunjungan="4">Rujukan Antar RS</a></li>
               </ul>
             </div>
-            <button type="button" name="button" class="btn btn-warning" id="kontrol">Kontrol</button>
-            <button type="button" name="button" class="btn btn-warning" id="spri">SPRI</button>
-            <button type="button" name="button" class="btn btn-warning" id="rujukkeluar">Rujuk Keluar</button>
-            <button type="button" name="button" class="btn btn-warning" id="prb">PRB</button>
             <input type="submit" id="selesai" class="btn btn-danger pull-right" name="" value="Selesai">
           </div>
         </div>
