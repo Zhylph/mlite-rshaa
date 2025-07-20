@@ -1,26 +1,59 @@
-  <table class="table">
-    <thead>
-      <tr>
-        <th>No Rawat</th>
-        <th>No SEP</th>
-        <th>No Surat</th>
-        <th>Tgl. Surat</th>
-        <th>Tgl. Periksa</th>
-        <th>Dokter</th>
-        <th>Poli</th>
-      </tr>
-    </thead>
-    <tbody>
-      {loop: $rujuk_keluar}
-      <tr>
-        <td>{$value.no_rawat}</td>
-        <td>{$value.no_sep}</td>
-        <td>{$value.no_rujukan}</td>
-        <td>{$value.tglRujukan}</td>
-        <td>{$value.tglRencanaKunjungan}</td>
-        <td>{$value.user}</td>
-        <td>{$value.nama_poliRujukan}</td>
-      </tr>
-      {/loop}
-    </tbody>
-  </table>
+<button class="btn btn-light" id="btn-cetak-rujukan" style="margin-bottom:10px;"></button>
+
+<script type="text/javascript">
+  $(document).on('click', '.print_rujukan', function(event) {
+    event.preventDefault();
+    var no_sep = $(this).attr('data-no_sep');
+    var baseURL = mlite.url + '/' + mlite.admin;
+    var token = (typeof mlite !== 'undefined' && mlite.token) ? mlite.token : '';
+    var url = baseURL + '/vclaim/cetakrujukkeluar/' + no_sep;
+    if(token) url += '?t=' + token;
+    window.open(url, '_blank');
+  });
+</script>
+
+  <div class="table-responsive" style="overflow-x:auto;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>No. SEP</th>
+          <th>Tgl. Rujukan</th>
+          <th>Tgl. Kunjungan</th>
+          <th>PPK Dirujuk</th>
+          <th>Nama PPK Dirujuk</th>
+          <th>Jenis Pelayanan</th>
+          <th>Catatan</th>
+          <th>Diagnosa Rujukan</th>
+          <th>Nama Diagnosa Rujukan</th>
+          <th>Tipe Rujukan</th>
+          <th>Poli Rujukan</th>
+          <th>Nama Poli Rujukan</th>
+          <th>Nomor Rujukan</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {loop: $rujuk_keluar}
+        <tr>
+          <td><button class="btn btn-success print_rujukan" data-no_sep="{$value.no_sep}">Cetak</button></td>
+          <td>{$value.no_sep}</td>
+          <td>{$value.tglRujukan}</td>
+          <td>{$value.tglRencanaKunjungan}</td>
+          <td>{$value.ppkDirujuk}</td>
+          <td>{$value.nm_ppkDirujuk}</td>
+          <td>{$value.jnsPelayanan}</td>
+          <td>{$value.catatan}</td>
+          <td>{$value.diagRujukan}</td>
+          <td>{$value.nama_diagRujukan}</td>
+          <td>{$value.tipeRujukan}</td>
+          <td>{$value.poliRujukan}</td>
+          <td>{$value.nama_poliRujukan}</td>
+          <td>{$value.no_rujukan}</td>
+          <td>{$value.user}</td>
+
+        </tr>
+        {/loop}
+      </tbody>
+    </table>
+  </div>

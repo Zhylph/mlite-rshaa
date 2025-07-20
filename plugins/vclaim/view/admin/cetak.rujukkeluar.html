@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SURAT RUJUKAN RUMAH SAKIT</title>
+  <style>
+    body { font-family: Verdana, Arial, sans-serif; margin: 20px; }
+    .rujukan-box { border: 1px solid #333; padding: 20px; width: 800px; margin: 0 auto; background: #fff; box-shadow: 2px 2px 4px #888; }
+    .header { display: flex; align-items: center; justify-content: space-between; }
+    .header img { height: 50px; }
+    .title { text-align: center; margin-top: 10px; margin-bottom: 10px; }
+    .title h2 { margin: 0; font-size: 22px; }
+    .title .sub { font-size: 15px; }
+    .data-table { width: 100%; margin-top: 10px; }
+    .data-table td { padding: 2px 6px; font-size: 15px; }
+    .footer { margin-top: 30px; display: flex; justify-content: space-between; }
+    .ttd { text-align: right; margin-top: 40px; }
+    .catatan { margin-top: 10px; }
+    .keterangan { margin-top: 10px; }
+    .info { font-size: 12px; margin-top: 10px; }
+    .bold { font-weight: bold; }
+    .bordered { border: 1px solid #333; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div id="cetakrujukan">
+    <style type="text/css">
+      html {
+        font-size:16px;
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      table td {
+        font-size:16px;
+        padding: 0;
+      }
+      .cetak {
+        display:inline-block;
+        padding:6px 12px;
+        margin:10px;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        white-space:nowrap;
+        float: right;
+        bottom: 10px;
+        right: 10px;
+      }
+      .tutup {
+        display:inline-block;
+        padding:6px 12px;
+        margin:10px;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        white-space:nowrap;
+        float: right;
+        bottom: 10px;
+        right: 10px;
+      }
+      .btn {
+        display:inline-block;
+        padding:6px 12px;
+        margin:10px;
+        font-size:14px;
+        font-weight:400;
+        line-height:1.5;
+        white-space:nowrap;
+        bottom: 10px;
+        right: 10px;
+      }
+    </style>
+    <table width="900" style="border:1px solid #333; box-shadow:2px 2px 4px #888; background:#fff; margin:0 auto;">
+      <tr>
+        <td colspan="6" style="padding-bottom:10px;">
+          <table width="100%">
+            <tr>
+              <td width="400">
+                <img src="{?=url()?}/plugins/vclaim/img/bpjslogo.png" alt="BPJS Kesehatan" width="280" height="50">
+              </td>
+              <td style="text-align:center;">
+                <div style="font-size:22px;font-weight:bold;">SURAT RUJUKAN RUMAH SAKIT</div>
+                <div style="font-size:15px;">Rujukan {?=isset($rujukan['tipeRujukan']) ? $rujukan['tipeRujukan'] : ''?}</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6">
+          <table width="100%">
+            <tr>
+              <td>Kepada Yth</td>
+              <td>:</td>
+              <td style="font-weight:bold;">{?=isset($rujukan['nm_ppkDirujuk']) ? $rujukan['nm_ppkDirujuk'] : ''?}</td>
+              <td>No. Rujukan</td>
+              <td>:</td>
+              <td style="font-weight:bold;">{?=isset($rujukan['no_rujukan']) ? $rujukan['no_rujukan'] : ''?}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>{?=isset($rujukan['nama_poliRujukan']) ? strtoupper($rujukan['nama_poliRujukan']) : ''?}</td>
+              <td>Asal Rumah Sakit</td>
+              <td>:</td>
+              <td>{?=isset($rujukan['nmppkpelayanan']) ? $rujukan['nmppkpelayanan'] : ''?}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td colspan="6" style="padding-top:10px;">Mohon pemeriksaan dan penanganan lebih lanjut penderita :</td></tr>
+      <tr>
+        <td>Nama</td>
+        <td>:</td>
+        <td>{?=isset($rujukan['nama_pasien']) ? $rujukan['nama_pasien'] : ''?}</td>
+        <td>Kelamin</td>
+        <td>:</td>
+        <td>{?=isset($rujukan['jkel']) ? $rujukan['jkel'] : ''?}</td>
+      </tr>
+      <tr>
+        <td>No. Kartu BPJS</td>
+        <td>:</td>
+        <td>{?=isset($rujukan['no_kartu']) ? $rujukan['no_kartu'] : ''?}</td>
+        <td>Rawat</td>
+        <td>:</td>
+        <td>{?=isset($rujukan['jnsPelayanan']) ? $rujukan['jnsPelayanan'] : ''?}</td>
+      </tr>
+      <tr>
+        <td>Diagnosa</td>
+        <td>:</td>
+        <td colspan="4">{?=isset($rujukan['diagRujukan']) ? $rujukan['diagRujukan'] : ''?} - {?=isset($rujukan['nama_diagRujukan']) ? $rujukan['nama_diagRujukan'] : ''?}</td>
+      </tr>
+      <tr>
+        <td>Keterangan</td>
+        <td>:</td>
+        <td colspan="4">{?=isset($rujukan['catatan']) ? $rujukan['catatan'] : ''?}</td>
+      </tr>
+      <tr><td colspan="6" style="height:20px;"></td></tr>
+      <tr>
+        <td colspan="3" style="font-size:12px;">
+          *) Rujukan Berlaku Sampai Dengan {?=isset($rujukan['tglRencanaKunjungan']) ? date('d M Y', strtotime($rujukan['tglRencanaKunjungan'])) : ''?}<br>
+          **) Tanggal Rencana Berkunjung {?=isset($rujukan['tglRencanaKunjungan']) ? date('d M Y', strtotime($rujukan['tglRencanaKunjungan'])) : ''?}
+        </td>
+        <td colspan="3" style="text-align:right;">
+          {?=isset($rujukan['nmppkpelayanan']) ? $rujukan['nmppkpelayanan'] : ''?}, {?=isset($rujukan['tglRujukan']) ? date('d M Y', strtotime($rujukan['tglRujukan'])) : ''?}<br>
+          Mengetahui<br><br><br>
+          __________________________
+        </td>
+      </tr>
+    </table>
+  </div>
+  <center style="margin-top:100px;">
+    <button class="tutup" type="button" onclick="javascript:window.close();opener.window.focus();">Tutup Window</button>
+    <button class="cetak" onclick="printContent('cetakrujukan')" type="button">Cetak Rujukan</button>
+  </center>
+  <script>
+  function printContent(el){
+    var restorepage = document.body.innerHTML;
+    var printcontent = document.getElementById(el).innerHTML;
+    document.body.innerHTML = printcontent;
+    window.print();
+    document.body.innerHTML = restorepage;
+  }
+  </script>
+</body>
+</html> 

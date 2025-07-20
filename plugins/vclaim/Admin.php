@@ -3110,6 +3110,7 @@ class Admin extends AdminModule
   public function getRujukKeluarDisplay($no_kartu)
   {
     $rujuk_keluar = $this->db('bridging_rujukan_bpjs')
+      ->select('bridging_rujukan_bpjs.*, bridging_rujukan_bpjs.catatan as catatan, bridging_sep.no_rawat, bridging_sep.no_sep')
       ->join('bridging_sep', 'bridging_sep.no_sep=bridging_rujukan_bpjs.no_sep')
       ->where('bridging_sep.no_kartu', $no_kartu)
       ->toArray();
@@ -3613,12 +3614,30 @@ class Admin extends AdminModule
   public function getRujukKeluarDisplayByNoRawat($no_rawat)
   {
     $rujuk_keluar = $this->db('bridging_rujukan_bpjs')
+      ->select('bridging_rujukan_bpjs.*, bridging_rujukan_bpjs.catatan as catatan, bridging_sep.no_rawat, bridging_sep.no_sep')
       ->join('bridging_sep', 'bridging_sep.no_sep=bridging_rujukan_bpjs.no_sep')
       ->where('bridging_sep.no_rawat', revertNoRawat($no_rawat))
       ->toArray();
     $this->tpl->set('rujuk_keluar', $this->tpl->noParse_array(htmlspecialchars_array($rujuk_keluar)));
     $this->tpl->set('no_rawat', $no_rawat);
     echo $this->draw('rujukkeluar.display.html');
+    exit();
+  }
+
+  // Endpoint cetak rujukan keluar berdasarkan no_sep
+  public function getCetakRujukKeluar($no_sep)
+  {
+    $rujukan = $this->db('bridging_rujukan_bpjs')
+      ->select('bridging_rujukan_bpjs.*, bridging_sep.*, bridging_rujukan_bpjs.catatan as catatan, bridging_sep.no_rawat, bridging_sep.no_sep')
+      ->join('bridging_sep', 'bridging_sep.no_sep=bridging_rujukan_bpjs.no_sep')
+      ->where('bridging_rujukan_bpjs.no_sep', $no_sep)
+      ->oneArray();
+    if (!$rujukan) {
+      echo '<h3>Data rujukan keluar tidak ditemukan untuk no_sep: ' . htmlspecialchars($no_sep) . '</h3>';
+      exit;
+    }
+    $this->tpl->set('rujukan', $this->tpl->noParse_array(htmlspecialchars_array($rujukan)));
+    echo $this->draw('cetak.rujukkeluar.html');
     exit();
   }
 
