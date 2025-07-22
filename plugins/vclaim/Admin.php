@@ -3164,22 +3164,20 @@ class Admin extends AdminModule
       $bridging_surat_pri_bpjs = $this->db('bridging_rujukan_bpjs')->save([
         'no_sep' => $_POST['no_sep'],
         'tglRujukan' => $_POST['tanggal_surat'],
-        'no_rujukan' => $spri['rujukan']['noRujukan'],
         'tglRencanaKunjungan' => $_POST['tanggal_periksa'],
         'ppkDirujuk' => $_POST['sep_asal_rujukan_kode_rujuk'],
         'nm_ppkDirujuk' => $_POST['sep_asal_rujukan_nama_rujuk'],
         'jnsPelayanan' => $_POST['jns_rujuk'],
+        'catatan' => $_POST['catatan'],
         'diagRujukan' => $_POST['sep_diagnosa_kode_rujuk'],
         'nama_diagRujukan' => $_POST['sep_diagnosa_nama_rujuk'],
-        'tipeRujukan' => $_POST['tanggal_periksa'],
+        'tipeRujukan' => $_POST['tipe_rujuk'],
         'poliRujukan' => $_POST['sep_spesialis_kode_rujuk'],
         'nama_poliRujukan' => $_POST['sep_spesialis_nama_rujuk'],
+        'no_rujukan' => isset($spri['rujukan']['noRujukan']) ? $spri['rujukan']['noRujukan'] : null,
         'user' => $_POST['sep_user'],
-        'catatan' => $_POST['catatan'],
       ]);
-      if ($bridging_surat_pri_bpjs) {
-        echo 'Sukses Simpan';
-      }
+      echo 'Sukses Simpan';
     } else {
       echo $data['metaData']['code'] . ' ' . $data['metaData']['message'];
     }
@@ -3644,13 +3642,24 @@ class Admin extends AdminModule
   // Endpoint: /vclaim/wsrujukanlistpeserta/{no_kartu}
   public function getWsRujukanListPeserta($no_kartu)
   {
-    // Gunakan property URL yang sudah pasti ada
-    $base_url = isset($this->vclaim_url) ? $this->vclaim_url : 'https://new-api.bpjs-kesehatan.go.id:8080/new-vclaim-rest';
-    $url = $base_url . '/Rujukan/List/Peserta/' . $no_kartu;
-    $timestamp = '';
-    $result = \Systems\Lib\BpjsService::get($url, [], $this->consid, $this->secretkey, $this->user_key, $timestamp);
-    header('Content-Type: application/json');
-    echo $result;
+    date_default_timezone_set('UTC');
+    $tStamp = strval(time() - strtotime("1970-01-01 00:00:00"));
+    $key = $this->consid . $this->secretkey . $tStamp;
+    $url = 'https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/Rujukan/List/Peserta/' . $no_kartu;
+    $output = \Systems\Lib\BpjsService::get($url, [], $this->consid, $this->secretkey, $this->user_key, $tStamp);
+    $data = json_decode($output, true);
+    if (isset($data['response']) && is_string($data['response'])) {
+      $stringDecrypt = function_exists('stringDecrypt') ? stringDecrypt($key, $data['response']) : $data['response'];
+      $decompress = '';
+      if (!empty($stringDecrypt) && class_exists('LZCompressor\\LZString')) {
+        $decompress = \LZCompressor\LZString::decompressFromEncodedURIComponent($stringDecrypt);
+      } else {
+        $decompress = $stringDecrypt;
+      }
+      $jsonTest = json_decode($decompress, true);
+      $data['response'] = $jsonTest !== null ? $jsonTest : $decompress;
+    }
+    echo json_encode($data);
     exit;
   }
 
